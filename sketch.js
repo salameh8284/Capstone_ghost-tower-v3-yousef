@@ -10,6 +10,8 @@ function preload(){
   doorImg = loadImage("door.png");
   climberImg = loadImage("climber.png");
   ghostImg = loadImage("ghost-standing.png");
+  ghostJumpingImg = loadImage("ghost-jumping.png");
+  
   spookySound = loadSound("spooky.wav");
 }
 
@@ -26,43 +28,56 @@ function setup(){
   
   ghost = createSprite(200,200,50,50);
   ghost.scale = 0.3;
-  ghost.addImage("ghost", ghostImg);
+  ghost.addImage("ghost", ghostJumpingImg);
 }
 
 function draw(){
   background(0);
+  edges=createEdgeSprites();
+  
+
   if (gameState === "play") {
    if (keyDown("left_arrow")){
-   ghost.x -= 3
-
-
-   }
-   if (keyDown("right_arrow")){
-    ghost.x += 3
- 
- 
-    }
-    if (keyDown("space")){
-      ghost.velocityY = -10
-   
-   
+      ghost.x -= 3;
       }
-   ghost.velocityY+=0.8
+   if (keyDown("right_arrow")){
+      ghost.x += 3;
+      }
+    if (keyDown("space")){
+      ghost.velocityY = -10;
+      }
+   ghost.velocityY+=0.7;
    if(tower.y>400){
-tower.y=300
-
-   }
+      tower.y=300
+      }
 spawnDoors();
+
+//if he is touching climber we make him stand and velociy Y=0
 if (climbersGroup.isTouching(ghost)){
-ghost .velocityY = 0 
+  ghost .velocityY = 0   ;
+  ghost.addImage("ghost", ghostImg);
+  }
+  else //if he is not touching 
+  { 
+    ghost.addImage("ghost", ghostJumpingImg );
+  }
 
 
-}
 if(invisibleBlockGroup.isTouching(ghost)){
-ghost.destroy()
-gameState = "end"
-}   
-    drawSprites();
+  ghost.destroy();
+  gameState = "end";
+  }   
+  drawSprites();
+  ghost.collide(edges);
+  //ghost.collide(rightEdge);
+  //ghost.collide(leftEdge);
+
+  //console.log("the ghost x is"+ghost.x);
+  //console.log("the ghost y is"+ghost.y);
+  if (ghost.x>552 || ghost.x<59 ||ghost.y>554.3     ) {
+    ghost.destroy();
+    gameState = "end";
+  }
   }
   
   if (gameState === "end"){
